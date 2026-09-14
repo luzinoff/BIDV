@@ -157,17 +157,24 @@ def main() -> int:
         LOGGER.info("Авторизация в почте...")
         mail.login(required_env("YANDEX_EMAIL"), password)
         LOGGER.info("Авторизация успешна")
+        LOGGER.info("Открытие папки '%s'...", mail_folder)
         result, _ = mail.select(f'"{mail_folder}"', readonly=True)
         if result != "OK":
             raise RuntimeError(f"Не удалось открыть папку почты: {mail_folder}")
+        LOGGER.info("Папка открыта")
+        LOGGER.info("Получение списка писем...")
         result, data = mail.uid("search", None, "ALL")
         if result != "OK":
             raise RuntimeError("Не удалось получить список писем")
 
-        for raw_uid in data[0].split():
+        all_uids = data[0].split()
+        LOGGER.info("Найдено писем: %d, уже обработано: %d", len(all_uids), len(processed_uids))
+
+        for raw_uid in all_uids:
             uid = raw_uid.decode("ascii")
             if uid in processed_uids:
                 continue
+            LOGGER.info("Чтение письма UID %s...", uid)
             result, payload = mail.uid("fetch", uid, "(RFC822)")
             if result != "OK" or not payload or not isinstance(payload[0], tuple):
                 LOGGER.warning("Не удалось прочитать письмо UID %s", uid)
@@ -177,9 +184,12 @@ def main() -> int:
             # Сравнение адреса, а не произвольной отображаемой строки.
             addresses = re.findall(r"[\w.+-]+@[\w.-]+", from_header)
             if sender not in addresses:
+                LOGGER.info("Письмо UID %s от %s — пропущено (ждём %s)", uid, addresses, sender)
                 continue
+            LOGGER.info("Письмо UID %s от нужного отправителя, парсинг...", uid)
             try:
                 transaction = parse_bidv_notification(text_from_message(message))
+                LOGGER.info("Распознано: %s на %d VND", transaction.transaction_type, transaction.amount_vnd)
                 outcome = upload_transaction(service, folder_id, transaction)
             except (ValueError, HttpError) as error:
                 LOGGER.warning("Письмо UID %s не выгружено: %s", uid, error)
