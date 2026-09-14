@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 64000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "HO HOANG THE QUYNH",
+  "transaction_at": "2026-08-29T22:25:15",
+  "reference_number": "020097048808292225142026ewkf726606"
+}

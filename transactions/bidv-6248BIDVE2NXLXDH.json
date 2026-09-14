@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 179000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "CONG TY TNHH SAN XUAT THUONG MAI TINH VAN",
+  "transaction_at": "2026-09-05T14:06:38",
+  "reference_number": "6248BIDVE2NXLXDH"
+}

@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 85000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "HO KINH DOANH CUA HANG AN UONG AU - A",
+  "transaction_at": "2026-09-04T20:40:13",
+  "reference_number": "020097048809042040132026qr1g151330"
+}
