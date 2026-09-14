@@ -36,7 +36,7 @@ def _value_after_label(text: str, *labels: str) -> str | None:
     """Возвращает первую непустую строку после двуязычной метки."""
     for label in labels:
         match = re.search(
-            rf"(?:^|\n){re.escape(label)}\s*:\s*(.*?){_FIELD_END}",
+            rf"{re.escape(label)}\s*:\s*(.*?){_FIELD_END}",
             text,
             flags=re.IGNORECASE,
         )
@@ -49,7 +49,7 @@ def _amount_after_label(text: str, *labels: str) -> int | None:
     """Извлекает VND после метки, допуская пояснительные строки между ними."""
     for label in labels:
         match = re.search(
-            rf"(?:^|\n){re.escape(label)}\s*:\s*(?:[^\n]*\n){{0,5}}?\s*([\d,.]+)\s*VND\b",
+            rf"{re.escape(label)}\s*:\s*(?:[^\n]*\n){{0,5}}?\s*([\d,.]+)\s*VND\b",
             text,
             flags=re.IGNORECASE,
         )
@@ -66,7 +66,7 @@ def _first_label_value(text: str, *labels: str) -> str | None:
         return value
     for label in labels:
         match = re.search(
-            rf"(?:^|\n){re.escape(label)}\s*:\s*\n\s*([^\n]+)",
+            rf"{re.escape(label)}\s*:\s*\n\s*([^\n]+)",
             text,
             flags=re.IGNORECASE,
         )
@@ -104,8 +104,9 @@ def _dual_label_amount(text: str, vietnamese_label: str, english_label: str) -> 
 
 def _read_transaction_type(text: str) -> str | None:
     """Возвращает вторую строку для формы «Loại ...:\nTransaction type: QR Pay»."""
+    # Ищем двуязычную пару: вьетнамская метка + английская метка + значение
     match = re.search(
-        r"(?:^|\n)Loại giao dịch\s*:\s*\n\s*Transaction type\s*:\s*([^\n]+)",
+        r"Loại giao dịch\s*:\s*\n\s*Transaction type\s*:\s*([^\n]+)",
         text,
         flags=re.IGNORECASE,
     )
@@ -116,7 +117,7 @@ def _read_transaction_type(text: str) -> str | None:
 
 def _read_dual_field(text: str, vietnamese_label: str, english_label: str) -> str | None:
     match = re.search(
-        rf"(?:^|\n){re.escape(vietnamese_label)}\s*:\s*\n\s*{re.escape(english_label)}\s*:\s*([^\n]+)",
+        rf"{re.escape(vietnamese_label)}\s*:\s*\n\s*{re.escape(english_label)}\s*:\s*([^\n]+)",
         text,
         flags=re.IGNORECASE,
     )
@@ -127,7 +128,7 @@ def _read_dual_field(text: str, vietnamese_label: str, english_label: str) -> st
 
 def _read_dual_amount(text: str, vietnamese_label: str, english_label: str) -> int | None:
     match = re.search(
-        rf"(?:^|\n){re.escape(vietnamese_label)}\s*:\s*\n\s*{re.escape(english_label)}\s*:\s*(?:[^\n]*\n){{0,5}}?\s*([\d,.]+)\s*VND\b",
+        rf"{re.escape(vietnamese_label)}\s*:\s*\n\s*{re.escape(english_label)}\s*:\s*(?:[^\n]*\n){{0,5}}?\s*([\d,.]+)\s*VND\b",
         text,
         flags=re.IGNORECASE,
     )

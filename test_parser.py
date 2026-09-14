@@ -3,17 +3,34 @@
 from parser import parse_bidv_notification
 
 
-INTERBANK = """Loại giao dịch:
+INTERBANK = """Thông báo giao dịch thành công!
+Notice of successful transaction
+Kính gửi quý khách: LUZINOV OLEG
+Dear Valued Customer: LUZINOV OLEG
+
+Loại giao dịch:
 Transaction type:	Chuyển tiền ngoài BIDV
 Interbank transfer
 Thời gian giao dịch:
-Transaction time:	13/09/2026 15:27:33
+Transaction time:	14/09/2026 17:02:55
 Số tham chiếu:
-Reference number:	6256BIDVE26FT6ZU
+Reference number:	020097048809141702542026f3rw434028
+Tài khoản nguồn:
+Debit account:	8842784999
 Số tiền giao dịch:
-Transaction amount:	38,000 VND
+Transaction amount:	99,000 VND
+Phí giao dịch:
+Transaction fee:	Miễn phí
 Tên người thụ hưởng:
-Beneficiary name:	DANG THI TUONG AN
+Beneficiary name:	LE THI THUY ANH
+Số tài khoản/Số thẻ thụ hưởng:
+Beneficiary account/ Card number:	9980179868888
+Tên ngân hàng thụ hưởng:
+Beneficiary bank:	NHTMCP Quân Đội
+Số tiền ghi có:
+Credit amount:	99,000 VND
+Nội dung giao dịch:
+Transaction remark:	LUZINOV OLEG Transfer
 """
 
 WITHIN_BIDV = """Loại giao dịch:
@@ -67,11 +84,11 @@ def main() -> None:
         INTERBANK,
         {
             "transaction_type": "interbank_transfer",
-            "amount_vnd": 38000,
+            "amount_vnd": 99000,
             "recipient_type": "beneficiary",
-            "recipient_name": "DANG THI TUONG AN",
-            "transaction_at": "2026-09-13T15:27:33",
-            "reference_number": "6256BIDVE26FT6ZU",
+            "recipient_name": "LE THI THUY ANH",
+            "transaction_at": "2026-09-14T17:02:55",
+            "reference_number": "020097048809141702542026f3rw434028",
         },
     )
     check(
