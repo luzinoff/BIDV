@@ -162,13 +162,13 @@ def main() -> int:
         if result != "OK":
             raise RuntimeError(f"Не удалось открыть папку почты: {mail_folder}")
         LOGGER.info("Папка открыта")
-        LOGGER.info("Получение списка писем...")
-        result, data = mail.uid("search", None, "ALL")
+        LOGGER.info("Поиск писем от %s...", sender)
+        result, data = mail.uid("search", None, f'FROM "{sender}"')
         if result != "OK":
             raise RuntimeError("Не удалось получить список писем")
 
-        all_uids = data[0].split()
-        LOGGER.info("Найдено писем: %d, уже обработано: %d", len(all_uids), len(processed_uids))
+        all_uids = data[0].split() if data[0] else []
+        LOGGER.info("Найдено писем от отправителя: %d, уже обработано: %d", len(all_uids), len(processed_uids))
 
         for raw_uid in all_uids:
             uid = raw_uid.decode("ascii")
