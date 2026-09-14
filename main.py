@@ -138,18 +138,25 @@ def upload_transaction(service, folder_id: str, transaction: Transaction) -> str
 
 
 def main() -> int:
+    LOGGER.info("Запуск сборщика...")
     sender = required_env("MAIL_SENDER").casefold()
     password = required_env("YANDEX_APP_PASSWORD")
     folder_id = required_env("GOOGLE_DRIVE_FOLDER_ID")
     mail_folder = os.getenv("YANDEX_MAIL_FOLDER", "INBOX").strip() or "INBOX"
     state_path = Path(os.getenv("STATE_FILE", STATE_FILE_NAME))
     processed_uids = load_state(state_path)
-    service = drive_service()
 
-    mail = imaplib.IMAP4_SSL(IMAP_HOST)
+    LOGGER.info("Подключение к Google Drive...")
+    service = drive_service()
+    LOGGER.info("Google Drive подключён")
+
+    LOGGER.info("Подключение к %s...", IMAP_HOST)
+    mail = imaplib.IMAP4_SSL(IMAP_HOST, timeout=30)
     newly_processed: set[str] = set()
     try:
+        LOGGER.info("Авторизация в почте...")
         mail.login(required_env("YANDEX_EMAIL"), password)
+        LOGGER.info("Авторизация успешна")
         result, _ = mail.select(f'"{mail_folder}"', readonly=True)
         if result != "OK":
             raise RuntimeError(f"Не удалось открыть папку почты: {mail_folder}")
