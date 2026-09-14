@@ -1,8 +1,7 @@
-"""Собирает новые уведомления BIDV из Яндекс Почты и выгружает JSON на Google Drive."""
+"""Собирает новые уведомления BIDV из Яндекс Почты и сохраняет JSON в репозиторий."""
 
 from __future__ import annotations
 
-import base64
 import email
 from email.header import decode_header, make_header
 from email.message import Message
@@ -15,18 +14,14 @@ import re
 import sys
 from typing import Iterator
 
-from google.oauth2 import service_account
-from googleapiclient.discovery import build
-from googleapiclient.errors import HttpError
-
 from parser import Transaction, parse_bidv_notification
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 LOGGER = logging.getLogger(__name__)
 
 IMAP_HOST = "imap.yandex.ru"
-GOOGLE_DRIVE_SCOPE = "https://www.googleapis.com/auth/drive"
 STATE_FILE_NAME = "processed_uids.json"
+TRANSACTIONS_DIR = "transactions"
 
 
 def required_env(name: str) -> str:
@@ -93,62 +88,30 @@ def save_state(path: Path, uids: set[str]) -> None:
     path.write_text(json.dumps(sorted(uids), ensure_ascii=False), encoding="utf-8")
 
 
-def drive_service():
-    raw = required_env("GOOGLE_SERVICE_ACCOUNT_JSON")
-    try:
-        info = json.loads(raw)
-    except json.JSONDecodeError:
-        # GitHub Secret иногда передают в base64, чтобы избежать искажения JSON.
-        try:
-            info = json.loads(base64.b64decode(raw).decode("utf-8"))
-        except Exception as error:
-            raise RuntimeError("GOOGLE_SERVICE_ACCOUNT_JSON не является JSON или base64(JSON)") from error
-    credentials = service_account.Credentials.from_service_account_info(
-        info, scopes=[GOOGLE_DRIVE_SCOPE]
-    )
-    return build("drive", "v3", credentials=credentials, cache_discovery=False)
-
-
-def remote_file_exists(service, folder_id: str, filename: str) -> bool:
-    escaped_name = filename.replace("'", "\\'")
-    query = (
-        f"'{folder_id}' in parents and name = '{escaped_name}' "
-        "and trashed = false"
-    )
-    result = service.files().list(q=query, fields="files(id)", pageSize=1).execute()
-    return bool(result.get("files"))
-
-
-def upload_transaction(service, folder_id: str, transaction: Transaction) -> str:
-    from googleapiclient.http import MediaInMemoryUpload
-
-    # Reference number делает имя идемпотентным, даже если Actions перезапустится.
+def save_transaction(transactions_dir: Path, transaction: Transaction) -> str:
+    """Сохраняет транзакцию в JSON-файл."""
+    transactions_dir.mkdir(exist_ok=True)
     filename = f"bidv-{transaction.reference_number}.json"
-    if remote_file_exists(service, folder_id, filename):
+    file_path = transactions_dir / filename
+
+    if file_path.exists():
         return "already_exists"
 
-    body = json.dumps(transaction.as_dict(), ensure_ascii=False, indent=2).encode("utf-8")
-    media = MediaInMemoryUpload(body, mimetype="application/json", resumable=False)
-    service.files().create(
-        body={"name": filename, "parents": [folder_id], "mimeType": "application/json"},
-        media_body=media,
-        fields="id",
-    ).execute()
-    return "uploaded"
+    file_path.write_text(
+        json.dumps(transaction.as_dict(), ensure_ascii=False, indent=2),
+        encoding="utf-8"
+    )
+    return "saved"
 
 
 def main() -> int:
     LOGGER.info("Запуск сборщика...")
     sender = required_env("MAIL_SENDER").casefold()
     password = required_env("YANDEX_APP_PASSWORD")
-    folder_id = required_env("GOOGLE_DRIVE_FOLDER_ID")
     mail_folder = os.getenv("YANDEX_MAIL_FOLDER", "INBOX").strip() or "INBOX"
     state_path = Path(os.getenv("STATE_FILE", STATE_FILE_NAME))
+    transactions_dir = Path(os.getenv("TRANSACTIONS_DIR", TRANSACTIONS_DIR))
     processed_uids = load_state(state_path)
-
-    LOGGER.info("Подключение к Google Drive...")
-    service = drive_service()
-    LOGGER.info("Google Drive подключён")
 
     LOGGER.info("Подключение к %s...", IMAP_HOST)
     mail = imaplib.IMAP4_SSL(IMAP_HOST, timeout=30)
@@ -188,11 +151,14 @@ def main() -> int:
                 continue
             LOGGER.info("Письмо UID %s от нужного отправителя, парсинг...", uid)
             try:
-                transaction = parse_bidv_notification(text_from_message(message))
+                mail_text = text_from_message(message)
+                transaction = parse_bidv_notification(mail_text)
                 LOGGER.info("Распознано: %s на %d VND", transaction.transaction_type, transaction.amount_vnd)
-                outcome = upload_transaction(service, folder_id, transaction)
-            except (ValueError, HttpError) as error:
+                outcome = save_transaction(transactions_dir, transaction)
+            except ValueError as error:
+                preview = mail_text[:500] if 'mail_text' in locals() else "(не удалось извлечь текст)"
                 LOGGER.warning("Письмо UID %s не выгружено: %s", uid, error)
+                LOGGER.warning("Начало письма: %s", preview.replace('\n', ' | '))
                 continue
             newly_processed.add(uid)
             LOGGER.info("UID %s: %s (%s)", uid, outcome, transaction.reference_number)
