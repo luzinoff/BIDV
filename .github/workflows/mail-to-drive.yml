@@ -27,31 +27,25 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-          cache: pip
-          cache-dependency-path: requirements.txt
 
-      - name: Установить зависимости
-        run: pip install -r requirements.txt
-
-      - name: Прочитать почту и выгрузить JSON
+      - name: Прочитать почту и сохранить JSON
         env:
           YANDEX_EMAIL: ${{ secrets.YANDEX_EMAIL }}
           YANDEX_APP_PASSWORD: ${{ secrets.YANDEX_APP_PASSWORD }}
           MAIL_SENDER: ${{ secrets.MAIL_SENDER }}
-          GOOGLE_DRIVE_FOLDER_ID: ${{ secrets.GOOGLE_DRIVE_FOLDER_ID }}
-          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
           YANDEX_MAIL_FOLDER: ${{ vars.YANDEX_MAIL_FOLDER }}
           STATE_FILE: processed_uids.json
+          TRANSACTIONS_DIR: transactions
         run: python main.py
 
-      - name: Сохранить журнал обработанных писем
+      - name: Сохранить изменения в репозиторий
         run: |
-          if git diff --quiet -- processed_uids.json; then
-            echo "Журнал не изменился"
-            exit 0
-          fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add processed_uids.json
-          git commit -m "chore: обновить журнал почтовых уведомлений"
+          git add processed_uids.json transactions/
+          if git diff --staged --quiet; then
+            echo "Нет новых транзакций"
+            exit 0
+          fi
+          git commit -m "chore: добавить новые транзакции BIDV"
           git push
