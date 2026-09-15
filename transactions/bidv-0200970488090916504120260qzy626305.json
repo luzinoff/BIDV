@@ -1,8 +1,0 @@
-{
-  "transaction_type": "interbank_transfer",
-  "amount_vnd": 120000,
-  "recipient_type": "beneficiary",
-  "recipient_name": "MAI XUAN BINH",
-  "transaction_at": "2026-09-09T16:50:41",
-  "reference_number": "0200970488090916504120260qzy626305"
-}

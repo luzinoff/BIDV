@@ -1,8 +1,0 @@
-{
-  "transaction_type": "interbank_transfer",
-  "amount_vnd": 42000,
-  "recipient_type": "beneficiary",
-  "recipient_name": "HO KINH DOANH CA ROT",
-  "transaction_at": "2026-08-31T11:28:02",
-  "reference_number": "6243BIDVE2N8FRCN"
-}

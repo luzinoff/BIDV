@@ -1,8 +1,0 @@
-{
-  "transaction_type": "interbank_transfer",
-  "amount_vnd": 19000,
-  "recipient_type": "beneficiary",
-  "recipient_name": "CONG TY CO PHAN ESPACE BUSINESS HUE",
-  "transaction_at": "2026-09-05T14:09:46",
-  "reference_number": "020097048809051409452026s2ja223296"
-}

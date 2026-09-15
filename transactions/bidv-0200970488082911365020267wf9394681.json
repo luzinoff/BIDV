@@ -1,8 +1,0 @@
-{
-  "transaction_type": "interbank_transfer",
-  "amount_vnd": 38000,
-  "recipient_type": "beneficiary",
-  "recipient_name": "Do Van Thang",
-  "transaction_at": "2026-08-29T11:36:51",
-  "reference_number": "0200970488082911365020267wf9394681"
-}

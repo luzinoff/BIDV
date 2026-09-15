@@ -1,8 +1,0 @@
-{
-  "transaction_type": "interbank_transfer",
-  "amount_vnd": 40000,
-  "recipient_type": "beneficiary",
-  "recipient_name": "HKD NHA HANG KHANH KAT",
-  "transaction_at": "2026-09-06T12:26:29",
-  "reference_number": "020097048809061226282026ogvr629355"
-}

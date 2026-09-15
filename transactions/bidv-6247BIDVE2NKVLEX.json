@@ -1,8 +1,0 @@
-{
-  "transaction_type": "interbank_transfer",
-  "amount_vnd": 110000,
-  "recipient_type": "beneficiary",
-  "recipient_name": "EPAY DD KD SO 3 CAFE DEP - NOOVA",
-  "transaction_at": "2026-09-04T21:24:38",
-  "reference_number": "6247BIDVE2NKVLEX"
-}

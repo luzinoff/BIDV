@@ -1,8 +1,0 @@
-{
-  "transaction_type": "interbank_transfer",
-  "amount_vnd": 12000,
-  "recipient_type": "beneficiary",
-  "recipient_name": "HKD PHAM THI HOA LAN",
-  "transaction_at": "2026-09-07T18:16:04",
-  "reference_number": "020097048809071816042026b91b652264"
-}

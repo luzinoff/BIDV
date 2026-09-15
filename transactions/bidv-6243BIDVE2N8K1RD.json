@@ -1,8 +1,0 @@
-{
-  "transaction_type": "interbank_transfer",
-  "amount_vnd": 49000,
-  "recipient_type": "beneficiary",
-  "recipient_name": "HO KINH DOANH CHON BINH YEN COFFEE",
-  "transaction_at": "2026-08-31T13:51:34",
-  "reference_number": "6243BIDVE2N8K1RD"
-}

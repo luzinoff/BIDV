@@ -1,8 +1,0 @@
-{
-  "transaction_type": "interbank_transfer",
-  "amount_vnd": 25000,
-  "recipient_type": "beneficiary",
-  "recipient_name": "NGO THI HONG GAM",
-  "transaction_at": "2026-08-30T19:56:35",
-  "reference_number": "020097048808301956352026e7y5853544"
-}

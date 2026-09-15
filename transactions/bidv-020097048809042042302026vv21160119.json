@@ -1,8 +1,0 @@
-{
-  "transaction_type": "interbank_transfer",
-  "amount_vnd": 20001,
-  "recipient_type": "beneficiary",
-  "recipient_name": "CONG TY TNHH MOONMILK - NGUYEN THIEN THUAT_116002944902",
-  "transaction_at": "2026-09-04T20:42:31",
-  "reference_number": "020097048809042042302026vv21160119"
-}
