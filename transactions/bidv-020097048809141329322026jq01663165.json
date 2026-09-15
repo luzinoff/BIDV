@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 25000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "CTY MINH AN NGUYEN TS JSC",
+  "transaction_at": "2026-09-14T13:29:33",
+  "reference_number": "020097048809141329322026jq01663165"
+}
