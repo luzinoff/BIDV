@@ -61,6 +61,46 @@ Merchant Name:	VIETTEL TELECOM
 """
 
 
+WITHIN_BIDV_MULTILINE_AMOUNT = """Thông báo giao dịch thành công!
+Notice of successful transaction
+Kính gửi quý khách: LUZINOV OLEG
+Dear Valued Customer: LUZINOV OLEG
+
+Loại giao dịch:
+Transaction type:	Chuyển tiền nội bộ BIDV
+Within BIDV transfer
+Thời gian giao dịch:
+Transaction time:	14/09/2026 22:15:56
+Số tham chiếu:
+Reference number:	0552Pavc-8C7N48oZT
+Tài khoản nguồn:
+Debit account:	8842784999
+Số tiền giao dịch:
+Transaction amount:
+Số tiền thực tế KH nhập chưa tính thuế phí
+(The actual amount customer enters, not include fee and tax)	25,000 VND
+Phí giao dịch:
+Transaction fee:	Miễn phí
+Tên người thụ hưởng:
+Beneficiary name:	HO KINH DOANH SINH TO VAN
+Số tài khoản thụ hưởng:
+Beneficiary account:	MBF62D865D050C01BID/8841697487
+Tên ngân hàng thụ hưởng:
+Beneficiary bank:	BIDV
+Số tiền ghi có:
+Credit amount:
+Số tiền thực tế người thụ hưởng nhận được:
+(The amount Beneficiary received)	25,000 VND
+Nội dung giao dịch:
+Transaction remark:	LUZINOV OLEG Transfer
+Kênh thực hiện giao dịch:
+Channel:	MB
+Hệ điều hành:
+Operating System:	ANDROID
+IP:	171.254.175.131
+"""
+
+
 def check(text: str, expected: dict) -> None:
     actual = parse_bidv_notification(text).as_dict()
     assert actual == expected, f"\nПолучено: {actual}\nОжидалось: {expected}"
@@ -113,7 +153,18 @@ def main() -> None:
             "reference_number": "0551bXq4-8C58VQ1DA",
         },
     )
-    print("OK: три шаблона разобраны, чувствительные поля отсутствуют")
+    check(
+        WITHIN_BIDV_MULTILINE_AMOUNT,
+        {
+            "transaction_type": "within_bidv_transfer",
+            "amount_vnd": 25000,
+            "recipient_type": "beneficiary",
+            "recipient_name": "HO KINH DOANH SINH TO VAN",
+            "transaction_at": "2026-09-14T22:15:56",
+            "reference_number": "0552Pavc-8C7N48oZT",
+        },
+    )
+    print("OK: четыре шаблона разобраны, чувствительные поля отсутствуют")
 
 
 if __name__ == "__main__":

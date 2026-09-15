@@ -49,7 +49,7 @@ def _amount_after_label(text: str, *labels: str) -> int | None:
     """Извлекает VND после метки, допуская пояснительные строки между ними."""
     for label in labels:
         match = re.search(
-            rf"{re.escape(label)}\s*:\s*(?:[^\n]*\n){{0,5}}?\s*([\d,.]+)\s*VND\b",
+            rf"{re.escape(label)}\s*:\s*(?:[^\n]*\n){{0,5}}?[^\n]*?([\d,.]+)\s*VND\b",
             text,
             flags=re.IGNORECASE,
         )
@@ -128,7 +128,7 @@ def _read_dual_field(text: str, vietnamese_label: str, english_label: str) -> st
 
 def _read_dual_amount(text: str, vietnamese_label: str, english_label: str) -> int | None:
     match = re.search(
-        rf"{re.escape(vietnamese_label)}\s*:\s*\n\s*{re.escape(english_label)}\s*:\s*(?:[^\n]*\n){{0,5}}?\s*([\d,.]+)\s*VND\b",
+        rf"{re.escape(vietnamese_label)}\s*:\s*\n\s*{re.escape(english_label)}\s*:\s*(?:[^\n]*\n){{0,5}}?[^\n]*?([\d,.]+)\s*VND\b",
         text,
         flags=re.IGNORECASE,
     )
