@@ -1,0 +1,8 @@
+{
+  "transaction_type": "card_payment",
+  "amount_vnd": 1000,
+  "recipient_type": "merchant",
+  "recipient_name": "GRAB",
+  "transaction_at": "2026-08-28T13:11:52",
+  "reference_number": "905406"
+}
