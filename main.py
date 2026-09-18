@@ -104,6 +104,43 @@ def save_transaction(transactions_dir: Path, transaction: Transaction) -> str:
     return "saved"
 
 
+def _imap_response_text(data: list[object]) -> str:
+    """Делает диагностический ответ IMAP пригодным для лога."""
+    parts: list[str] = []
+    for item in data:
+        if isinstance(item, bytes):
+            parts.append(item.decode("utf-8", errors="replace"))
+        elif item is not None:
+            parts.append(str(item))
+    return " ".join(parts).strip() or "пустой ответ сервера"
+
+
+def search_sender_uids(mail: imaplib.IMAP4_SSL, sender: str) -> list[bytes]:
+    """Ищет по отправителю; при сбое SEARCH использует только открытую папку.
+
+    Некоторые IMAP-серверы Яндекса временами отклоняют критерий FROM. Запасной
+    поиск ALL не выходит за пределы уже открытой папки, а точная проверка адреса
+    выполняется ниже перед разбором каждого письма.
+    """
+    result, data = mail.uid("search", None, "FROM", f'"{sender}"')
+    if result == "OK":
+        return data[0].split() if data and data[0] else []
+
+    LOGGER.warning(
+        "IMAP-поиск по отправителю не выполнен (%s: %s). "
+        "Перехожу к поиску только в открытой папке.",
+        result,
+        _imap_response_text(data),
+    )
+    result, data = mail.uid("search", None, "ALL")
+    if result != "OK":
+        raise RuntimeError(
+            "Не удалось получить список писем из открытой папки "
+            f"({result}: {_imap_response_text(data)})"
+        )
+    return data[0].split() if data and data[0] else []
+
+
 def main() -> int:
     LOGGER.info("Запуск сборщика...")
     sender = required_env("MAIL_SENDER").casefold()
@@ -126,12 +163,30 @@ def main() -> int:
             raise RuntimeError(f"Не удалось открыть папку почты: {mail_folder}")
         LOGGER.info("Папка открыта")
         LOGGER.info("Поиск писем от %s...", sender)
-        result, data = mail.uid("search", None, f'FROM "{sender}"')
+        result, data = mail.uid("search", None, "FROM", sender)
         if result != "OK":
-            raise RuntimeError("Не удалось получить список писем")
+            # Некоторые сеансы Yandex IMAP отвергают серверный SEARCH FROM.
+            # Папка BIDV уже выбрана, а ниже отправитель всё равно строго
+            # проверяется по заголовку From, поэтому безопасно перейти к
+            # поиску всех писем только в этой папке.
+            response = b" ".join(data).decode("utf-8", errors="replace") if data else "(без пояснения)"
+            LOGGER.warning(
+                "IMAP не выполнил поиск по отправителю (статус %s: %s). "
+                "Проверяю все письма только в папке '%s'.",
+                result,
+                response,
+                mail_folder,
+            )
+            result, data = mail.uid("search", None, "ALL")
+            if result != "OK":
+                response = b" ".join(data).decode("utf-8", errors="replace") if data else "(без пояснения)"
+                raise RuntimeError(
+                    f"Не удалось получить список писем из папки {mail_folder!r} "
+                    f"(статус {result}: {response})"
+                )
 
         all_uids = data[0].split() if data[0] else []
-        LOGGER.info("Найдено писем от отправителя: %d, уже обработано: %d", len(all_uids), len(processed_uids))
+        LOGGER.info("Найдено писем в выбранной папке: %d, уже обработано: %d", len(all_uids), len(processed_uids))
 
         for raw_uid in all_uids:
             uid = raw_uid.decode("ascii")
