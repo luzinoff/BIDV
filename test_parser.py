@@ -59,6 +59,8 @@ Số tiền:
 Amount:	135,000 VND
 Merchant Name:	VIETTEL TELECOM
 """
+
+WITHIN_BIDV_MULTILINE_AMOUNT = """Thông báo giao dịch thành công!
 Notice of successful transaction
 Kính gửi quý khách: LUZINOV OLEG
 Dear Valued Customer: LUZINOV OLEG
@@ -115,6 +117,7 @@ Vào lúc/Time: 18/09/2026 00:38:56
 Tại/At: Lazada VN
 Mã giao dịch/Approval code: 905413
 """
+
 
 
 def check(text: str, expected: dict) -> None:
@@ -180,17 +183,15 @@ def main() -> None:
             "reference_number": "0552Pavc-8C7N48oZT",
         },
     )
-    check(
-        CARD_PAYMENT,
-        {
-            "transaction_type": "card_payment",
-            "amount_vnd": 159103,
-            "recipient_type": "merchant",
-            "recipient_name": "Lazada VN",
-            "transaction_at": "2026-09-18T00:38:56",
-            "reference_number": "905413",
-        },
-    )
+    card_expected = {
+        "transaction_type": "card_payment",
+        "amount_vnd": 159103,
+        "recipient_type": "merchant",
+        "recipient_name": "Lazada VN",
+        "transaction_at": "2026-09-18T00:38:56",
+        "reference_number": "905413",
+    }
+    check(CARD_PAYMENT, card_expected)
     print("OK: пять шаблонов разобраны, чувствительные поля отсутствуют")
 
 
