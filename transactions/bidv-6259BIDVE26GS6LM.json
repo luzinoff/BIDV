@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 125000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "Nguyen Duc Quoc Khanh",
+  "transaction_at": "2026-09-16T21:31:52",
+  "reference_number": "6259BIDVE26GS6LM"
+}

@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 45000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "TRAN THIEN TAM",
+  "transaction_at": "2026-09-17T21:40:04",
+  "reference_number": "6260BIDVE26XZC28"
+}
