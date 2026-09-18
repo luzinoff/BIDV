@@ -31,6 +31,19 @@ def required_env(name: str) -> str:
     return value
 
 
+def configured_senders() -> set[str]:
+    """Возвращает список разрешённых отправителей из MAIL_SENDER.
+
+    Для совместимости принимается как один адрес, так и несколько адресов
+    через запятую или пробел.
+    """
+    raw = required_env("MAIL_SENDER")
+    senders = {item.casefold() for item in re.split(r"[,;\s]+", raw) if item}
+    if not senders:
+        raise RuntimeError("Не задан ни один отправитель в MAIL_SENDER")
+    return senders
+
+
 def decode_mime_header(value: str | None) -> str:
     if not value:
         return ""
@@ -115,22 +128,35 @@ def _imap_response_text(data: list[object]) -> str:
     return " ".join(parts).strip() or "пустой ответ сервера"
 
 
-def search_sender_uids(mail: imaplib.IMAP4_SSL, sender: str) -> list[bytes]:
-    """Ищет по отправителю; при сбое SEARCH использует только открытую папку.
+def search_sender_uids(mail: imaplib.IMAP4_SSL, senders: set[str]) -> list[bytes]:
+    """Ищет UID всех разрешённых отправителей в открытой папке.
 
-    Некоторые IMAP-серверы Яндекса временами отклоняют критерий FROM. Запасной
-    поиск ALL не выходит за пределы уже открытой папки, а точная проверка адреса
-    выполняется ниже перед разбором каждого письма.
+    Если сервер отвергает SEARCH FROM, запасной поиск ALL остаётся ограничен
+    выбранной папкой. Точная проверка заголовка From выполняется перед разбором.
     """
-    result, data = mail.uid("search", None, "FROM", f'"{sender}"')
-    if result == "OK":
-        return data[0].split() if data and data[0] else []
+    found: set[bytes] = set()
+    failed: list[str] = []
+    for sender in sorted(senders):
+        result, data = mail.uid("search", None, "FROM", f'"{sender}"')
+        if result == "OK":
+            if data and data[0]:
+                found.update(data[0].split())
+        else:
+            failed.append(sender)
+            LOGGER.warning(
+                "IMAP-поиск по отправителю %s не выполнен (%s: %s).",
+                sender,
+                result,
+                _imap_response_text(data),
+            )
+
+    if not failed:
+        return sorted(found, key=lambda value: int(value))
 
     LOGGER.warning(
-        "IMAP-поиск по отправителю не выполнен (%s: %s). "
-        "Перехожу к поиску только в открытой папке.",
-        result,
-        _imap_response_text(data),
+        "Перехожу к поиску всех писем только в открытой папке для проверки "
+        "отправителей: %s.",
+        ", ".join(failed),
     )
     result, data = mail.uid("search", None, "ALL")
     if result != "OK":
@@ -141,9 +167,21 @@ def search_sender_uids(mail: imaplib.IMAP4_SSL, sender: str) -> list[bytes]:
     return data[0].split() if data and data[0] else []
 
 
+def sender_list_text(senders: set[str]) -> str:
+    return ", ".join(sorted(senders))
+
+
+def parse_sender_addresses(from_header: str) -> list[str]:
+    return re.findall(r"[\w.+-]+@[\w.-]+", from_header.casefold())
+
+
+def sender_matches(from_header: str, senders: set[str]) -> bool:
+    return bool(set(parse_sender_addresses(from_header)).intersection(senders))
+
+
 def main() -> int:
     LOGGER.info("Запуск сборщика...")
-    sender = required_env("MAIL_SENDER").casefold()
+    senders = configured_senders()
     password = required_env("YANDEX_APP_PASSWORD")
     mail_folder = os.getenv("YANDEX_MAIL_FOLDER", "INBOX").strip() or "INBOX"
     state_path = Path(os.getenv("STATE_FILE", STATE_FILE_NAME))
@@ -162,30 +200,8 @@ def main() -> int:
         if result != "OK":
             raise RuntimeError(f"Не удалось открыть папку почты: {mail_folder}")
         LOGGER.info("Папка открыта")
-        LOGGER.info("Поиск писем от %s...", sender)
-        result, data = mail.uid("search", None, "FROM", sender)
-        if result != "OK":
-            # Некоторые сеансы Yandex IMAP отвергают серверный SEARCH FROM.
-            # Папка BIDV уже выбрана, а ниже отправитель всё равно строго
-            # проверяется по заголовку From, поэтому безопасно перейти к
-            # поиску всех писем только в этой папке.
-            response = b" ".join(data).decode("utf-8", errors="replace") if data else "(без пояснения)"
-            LOGGER.warning(
-                "IMAP не выполнил поиск по отправителю (статус %s: %s). "
-                "Проверяю все письма только в папке '%s'.",
-                result,
-                response,
-                mail_folder,
-            )
-            result, data = mail.uid("search", None, "ALL")
-            if result != "OK":
-                response = b" ".join(data).decode("utf-8", errors="replace") if data else "(без пояснения)"
-                raise RuntimeError(
-                    f"Не удалось получить список писем из папки {mail_folder!r} "
-                    f"(статус {result}: {response})"
-                )
-
-        all_uids = data[0].split() if data[0] else []
+        LOGGER.info("Поиск писем от %s...", sender_list_text(senders))
+        all_uids = search_sender_uids(mail, senders)
         LOGGER.info("Найдено писем в выбранной папке: %d, уже обработано: %d", len(all_uids), len(processed_uids))
 
         for raw_uid in all_uids:
@@ -198,13 +214,23 @@ def main() -> int:
                 LOGGER.warning("Не удалось прочитать письмо UID %s", uid)
                 continue
             message = email.message_from_bytes(payload[0][1])
-            from_header = decode_mime_header(message.get("From")).casefold()
+            from_header = decode_mime_header(message.get("From"))
             # Сравнение адреса, а не произвольной отображаемой строки.
-            addresses = re.findall(r"[\w.+-]+@[\w.-]+", from_header)
-            if sender not in addresses:
-                LOGGER.info("Письмо UID %s от %s — пропущено (ждём %s)", uid, addresses, sender)
+            addresses = parse_sender_addresses(from_header)
+            if not sender_matches(from_header, senders):
+                LOGGER.info(
+                    "Письмо UID %s от %s — пропущено (ждём %s)",
+                    uid,
+                    addresses,
+                    sender_list_text(senders),
+                )
                 continue
-            LOGGER.info("Письмо UID %s от нужного отправителя, парсинг...", uid)
+            matched_senders = sorted(set(addresses).intersection(senders))
+            LOGGER.info(
+                "Письмо UID %s от нужного отправителя (%s), парсинг...",
+                uid,
+                ", ".join(matched_senders),
+            )
             try:
                 mail_text = text_from_message(message)
                 transaction = parse_bidv_notification(mail_text)

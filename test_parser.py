@@ -59,9 +59,6 @@ Số tiền:
 Amount:	135,000 VND
 Merchant Name:	VIETTEL TELECOM
 """
-
-
-WITHIN_BIDV_MULTILINE_AMOUNT = """Thông báo giao dịch thành công!
 Notice of successful transaction
 Kính gửi quý khách: LUZINOV OLEG
 Dear Valued Customer: LUZINOV OLEG
@@ -98,6 +95,25 @@ Channel:	MB
 Hệ điều hành:
 Operating System:	ANDROID
 IP:	171.254.175.131
+"""
+
+
+CARD_PAYMENT = """THÔNG BÁO
+GIAO DỊCH THẺ THÀNH CÔNG
+NOTIFICATION OF TRANSACTION
+Ngày thông báo: 18/09/2026
+Date
+
+Kính gửi Quý khách hàng/ Dear Mr/Ms: LUZINOV OLEG
+BIDV xin thông báo giao dịch của Quý khách vừa thực hiện thành công qua thẻ MC Debit Classic Ready như sau/ Here is your transaction infomation:
+Số thẻ/Card Number: 5119xx1686
+Chủ thẻ/Name of cardholder: LUZINOV OLEG
+Giao dịch/Transaction type: Thanh toán hàng hóa, dịch vụ/Retail
+Số tiền giao dịch gốc/Original amount: 159,103 VND
+Trạng thái giao dịch/Transaction status: Thành công/ Successfully
+Vào lúc/Time: 18/09/2026 00:38:56
+Tại/At: Lazada VN
+Mã giao dịch/Approval code: 905413
 """
 
 
@@ -164,7 +180,18 @@ def main() -> None:
             "reference_number": "0552Pavc-8C7N48oZT",
         },
     )
-    print("OK: четыре шаблона разобраны, чувствительные поля отсутствуют")
+    check(
+        CARD_PAYMENT,
+        {
+            "transaction_type": "card_payment",
+            "amount_vnd": 159103,
+            "recipient_type": "merchant",
+            "recipient_name": "Lazada VN",
+            "transaction_at": "2026-09-18T00:38:56",
+            "reference_number": "905413",
+        },
+    )
+    print("OK: пять шаблонов разобраны, чувствительные поля отсутствуют")
 
 
 if __name__ == "__main__":

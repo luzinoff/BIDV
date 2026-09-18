@@ -85,6 +85,26 @@ def _field_amount(text: str, vietnamese_label: str, english_label: str) -> int |
     return _amount_after_label(text, english_label) or _amount_after_label(text, vietnamese_label)
 
 
+def _slash_field(text: str, vietnamese_label: str, english_label: str) -> str | None:
+    """Читает компактную двуязычную форму «Tiếng Việt/English: value»."""
+    match = re.search(
+        rf"{re.escape(vietnamese_label)}\s*/\s*{re.escape(english_label)}\s*:\s*([^\n]+)",
+        text,
+        flags=re.IGNORECASE,
+    )
+    return match.group(1).strip() if match else None
+
+
+def _slash_amount(text: str, vietnamese_label: str, english_label: str) -> int | None:
+    value = _slash_field(text, vietnamese_label, english_label)
+    if not value:
+        return None
+    match = re.search(r"([\d,.]+)\s*VND\b", value, flags=re.IGNORECASE)
+    if not match:
+        return None
+    return int(re.sub(r"[^0-9]", "", match.group(1)))
+
+
 def _normalized_type(text: str) -> str | None:
     """Название операции бывает на строке после метки на вьетнамском и английском."""
     english = _first_label_value(text, "Transaction type")
@@ -161,6 +181,41 @@ def _read_qr_amount(text: str) -> int | None:
     return _dual_label_amount(text, "Số tiền", "Amount")
 
 
+def _read_card_notification(text: str) -> Transaction:
+    transaction_type = _require(
+        _slash_field(text, "Giao dịch", "Transaction type"),
+        "Transaction type",
+    )
+    amount = _require(
+        _slash_amount(text, "Số tiền giao dịch gốc", "Original amount"),
+        "Original amount",
+    )
+    transaction_time = _require(
+        _slash_field(text, "Vào lúc", "Time"),
+        "Time",
+    )
+    recipient_name = _require(
+        _slash_field(text, "Tại", "At"),
+        "At",
+    )
+    approval_code = _require(
+        _slash_field(text, "Mã giao dịch", "Approval code"),
+        "Approval code",
+    )
+    status = _slash_field(text, "Trạng thái giao dịch", "Transaction status")
+    if not status or "thành công" not in status.casefold() and "success" not in status.casefold():
+        raise ValueError(f"Неподтверждённый статус операции: {status!r}")
+
+    return Transaction(
+        transaction_type="card_payment",
+        amount_vnd=int(amount),
+        recipient_type="merchant",
+        recipient_name=str(recipient_name),
+        transaction_at=_parse_datetime(str(transaction_time)),
+        reference_number=str(approval_code),
+    )
+
+
 def _require(value: str | int | None, field: str) -> str | int:
     if value is None or value == "":
         raise ValueError(f"Не найдено обязательное поле: {field}")
@@ -175,12 +230,16 @@ def _parse_datetime(value: str) -> str:
 
 
 def parse_bidv_notification(text: str) -> Transaction:
-    """Разбирает только три подтверждённых типа письма BIDV.
+    """Разбирает подтверждённые уведомления BIDV о переводах, QR и оплате картой.
 
     Не возвращает счета, номера карт, IP-адреса, ОС или полный текст письма.
     Неугаданные шаблоны намеренно завершаются ошибкой и не выгружаются.
     """
     normalized = text.replace(" ", " ").replace("\r\n", "\n")
+    # Уведомления bidvcare используют компактные метки вида «Giao dịch/Transaction type: ...».
+    if _slash_field(normalized, "Giao dịch", "Transaction type") and _slash_field(normalized, "Tại", "At"):
+        return _read_card_notification(normalized)
+
     transaction_type = _require(_read_transaction_type(normalized), "Transaction type")
     transaction_time = _require(_read_time(normalized), "Transaction time")
     reference_number = _require(_read_reference(normalized), "Reference number")
