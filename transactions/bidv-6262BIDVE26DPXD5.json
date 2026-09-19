@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 145000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "HO KINH DOANH Z BEACH",
+  "transaction_at": "2026-09-19T22:54:00",
+  "reference_number": "6262BIDVE26DPXD5"
+}
