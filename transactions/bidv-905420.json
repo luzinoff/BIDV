@@ -1,0 +1,8 @@
+{
+  "transaction_type": "card_payment",
+  "amount_vnd": 95835,
+  "recipient_type": "merchant",
+  "recipient_name": "Lazada VN",
+  "transaction_at": "2026-09-19T15:38:23",
+  "reference_number": "905420"
+}
