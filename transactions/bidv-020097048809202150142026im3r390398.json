@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 60000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "DANG HUONG GIANG_61470888",
+  "transaction_at": "2026-09-20T21:50:14",
+  "reference_number": "020097048809202150142026im3r390398"
+}
