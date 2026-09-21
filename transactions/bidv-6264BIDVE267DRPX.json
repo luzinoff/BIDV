@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 20000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "TRAN THI MINH HIEU_TRAN THI MINH HIEU",
+  "transaction_at": "2026-09-21T13:08:02",
+  "reference_number": "6264BIDVE267DRPX"
+}
