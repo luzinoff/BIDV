@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 22000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "79 MART BIET THU",
+  "transaction_at": "2026-09-24T01:49:51",
+  "reference_number": "020097048809240149502026mj3b802795"
+}
