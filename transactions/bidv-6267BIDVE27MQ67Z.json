@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 50000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "HKD LE THI CAM TIEN NT",
+  "transaction_at": "2026-09-24T20:55:42",
+  "reference_number": "6267BIDVE27MQ67Z"
+}
