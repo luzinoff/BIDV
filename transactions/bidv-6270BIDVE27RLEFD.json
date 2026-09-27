@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 15000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "COCO MARKET CN2_VU VAN NAM",
+  "transaction_at": "2026-09-27T15:38:22",
+  "reference_number": "6270BIDVE27RLEFD"
+}
