@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 11500,
+  "recipient_type": "beneficiary",
+  "recipient_name": "WINCOMMERCE JSC",
+  "transaction_at": "2026-09-28T18:59:01",
+  "reference_number": "0200970488092818585920261919484313"
+}
