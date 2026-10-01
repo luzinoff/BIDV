@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 25000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "HO KINH DOANH MIXUE TRAN VAN PHUC",
+  "transaction_at": "2026-10-01T20:02:01",
+  "reference_number": "020097048810012002002026ykay214804"
+}
