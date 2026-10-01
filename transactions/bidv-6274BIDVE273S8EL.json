@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 40000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "LE NGOC THAO NGUYEN",
+  "transaction_at": "2026-10-01T22:03:26",
+  "reference_number": "6274BIDVE273S8EL"
+}
