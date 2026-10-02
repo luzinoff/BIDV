@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 9000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "CTY CO PHAN VEGA CITY",
+  "transaction_at": "2026-10-02T21:41:55",
+  "reference_number": "6275BIDVE27IU8GD"
+}

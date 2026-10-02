@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 2000000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "KOKORINA INESSA",
+  "transaction_at": "2026-10-02T18:46:31",
+  "reference_number": "020097048810021846312026i382956529"
+}
