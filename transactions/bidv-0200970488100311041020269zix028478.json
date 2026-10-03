@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 37000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "Cao Xuan Hoa",
+  "transaction_at": "2026-10-03T11:04:11",
+  "reference_number": "0200970488100311041020269zix028478"
+}

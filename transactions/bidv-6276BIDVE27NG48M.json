@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 405000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "CONG VIEN DL YANG BAY-CN TCTY KHANH VIET",
+  "transaction_at": "2026-10-03T11:28:43",
+  "reference_number": "6276BIDVE27NG48M"
+}
