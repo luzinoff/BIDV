@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 55000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "HO KINH DOANH TIEM COM - PHO HOI",
+  "transaction_at": "2026-10-06T16:08:39",
+  "reference_number": "6279BIDVE2PAMU24"
+}

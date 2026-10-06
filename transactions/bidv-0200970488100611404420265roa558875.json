@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 7500000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "HONG THI NHU Y",
+  "transaction_at": "2026-10-06T11:40:45",
+  "reference_number": "0200970488100611404420265roa558875"
+}
