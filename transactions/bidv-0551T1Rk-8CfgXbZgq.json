@@ -1,0 +1,8 @@
+{
+  "transaction_type": "within_bidv_transfer",
+  "amount_vnd": 40000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "HO KINH DOANH TRUONG NGUYEN QUOC CUONG",
+  "transaction_at": "2026-10-07T11:40:03",
+  "reference_number": "0551T1Rk-8CfgXbZgq"
+}
