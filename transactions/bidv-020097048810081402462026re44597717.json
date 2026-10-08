@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 6000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "79 MART 3",
+  "transaction_at": "2026-10-08T14:02:47",
+  "reference_number": "020097048810081402462026re44597717"
+}

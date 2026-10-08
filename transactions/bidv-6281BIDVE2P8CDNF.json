@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 15000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "HO KINH DOANH NHA THUOC GIA AN",
+  "transaction_at": "2026-10-08T14:00:14",
+  "reference_number": "6281BIDVE2P8CDNF"
+}
