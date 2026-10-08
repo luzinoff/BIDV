@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 95000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "NGUYEN NGOC CUONG",
+  "transaction_at": "2026-10-08T17:48:54",
+  "reference_number": "020097048810081748522026vsdn560430"
+}
