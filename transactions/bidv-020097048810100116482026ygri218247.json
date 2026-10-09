@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 90000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "HO KINH DOANH BLUE MART",
+  "transaction_at": "2026-10-10T01:16:49",
+  "reference_number": "020097048810100116482026ygri218247"
+}
