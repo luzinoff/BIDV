@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 120000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "TRAN THI PHUONG",
+  "transaction_at": "2026-10-10T22:15:45",
+  "reference_number": "0200970488101022154420261q9c176690"
+}

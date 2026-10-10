@@ -1,0 +1,8 @@
+{
+  "transaction_type": "within_bidv_transfer",
+  "amount_vnd": 70000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "VO THANH BAO LINH",
+  "transaction_at": "2026-10-10T22:25:07",
+  "reference_number": "0392TzXK-8CkviUFS9"
+}
