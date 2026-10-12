@@ -60,6 +60,42 @@ Amount:	135,000 VND
 Merchant Name:	VIETTEL TELECOM
 """
 
+
+INTERBANK_2026_10_11 = """Thông báo giao dịch thành công!
+Notice of successful transaction
+Kính gửi quý khách: LUZINOV OLEG
+Dear Valued Customer: LUZINOV OLEG
+
+Loại giao dịch:
+Transaction type:	Chuyển tiền ngoài BIDV
+Interbank transfer
+Thời gian giao dịch:
+Transaction time:	11/10/2026 21:44:54
+Số tham chiếu:
+Reference number:	0200970488101121445420264wfa268024
+Tài khoản nguồn:
+Debit account:	8842784999
+Số tiền giao dịch:
+Transaction amount:	25,000 VND
+Phí giao dịch:
+Transaction fee:	Miễn phí
+Tên người thụ hưởng:
+Beneficiary name:	HKD TRAI CAY THUY 83 SINH TO TRAI CAY TH
+Số tài khoản/Số thẻ thụ hưởng:
+Beneficiary account/ Card number:	NP82502882707056VCB
+Tên ngân hàng thụ hưởng:
+Beneficiary bank:	NHTMCP Ngoại thương Việt Nam (VCB)
+Số tiền ghi có:
+Credit amount:	25,000 VND
+Nội dung giao dịch:
+Transaction remark:	MCKNV3GBSPTLCNP 522620334
+Kênh thực hiện giao dịch:
+Channel:	MB
+Hệ điều hành:
+Operating System:	ANDROID
+IP:	171.244.212.12
+"""
+
 WITHIN_BIDV_MULTILINE_AMOUNT = """Thông báo giao dịch thành công!
 Notice of successful transaction
 Kính gửi quý khách: LUZINOV OLEG
@@ -170,6 +206,17 @@ def main() -> None:
             "recipient_name": "VIETTEL TELECOM",
             "transaction_at": "2026-09-13T11:00:14",
             "reference_number": "0551bXq4-8C58VQ1DA",
+        },
+    )
+    check(
+        INTERBANK_2026_10_11,
+        {
+            "transaction_type": "interbank_transfer",
+            "amount_vnd": 25000,
+            "recipient_type": "beneficiary",
+            "recipient_name": "HKD TRAI CAY THUY 83 SINH TO TRAI CAY TH",
+            "transaction_at": "2026-10-11T21:44:54",
+            "reference_number": "0200970488101121445420264wfa268024",
         },
     )
     check(

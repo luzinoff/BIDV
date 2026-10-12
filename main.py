@@ -172,34 +172,15 @@ def _imap_response_text(data: list[object]) -> str:
 
 
 def search_sender_uids(mail: imaplib.IMAP4_SSL, senders: set[str]) -> list[bytes]:
-    """Ищет сообщения разрешённых отправителей в уже открытой папке.
+    """Получает все UID только из выбранной папки.
 
-    Если Yandex временно отклоняет SEARCH FROM, выполняется ALL только в этой
-    папке; перед разбором адрес From всё равно проверяется точно.
+    Поиск FROM у Yandex иногда отвечает OK, но возвращает неполный результат.
+    Поэтому папка BIDV сначала ограничивает область поиска, а точная проверка
+    адреса From выполняется после чтения каждого письма.
     """
-    found: set[bytes] = set()
-    failed: list[str] = []
-    for sender in sorted(senders):
-        result, data = mail.uid("search", None, "FROM", f'"{sender}"')
-        if result == "OK":
-            if data and data[0]:
-                found.update(data[0].split())
-        else:
-            failed.append(sender)
-            LOGGER.warning(
-                "IMAP-поиск по отправителю %s не выполнен (%s: %s).",
-                sender,
-                result,
-                _imap_response_text(data),
-            )
-
-    if not failed:
-        return sorted(found, key=lambda value: int(value))
-
-    LOGGER.warning(
-        "Перехожу к поиску всех писем только в открытой папке для проверки "
-        "отправителей: %s.",
-        ", ".join(failed),
+    LOGGER.info(
+        "Получаю все письма из выбранной папки и затем проверяю отправителей: %s",
+        ", ".join(sorted(senders)),
     )
     result, data = mail.uid("search", None, "ALL")
     if result != "OK":
@@ -208,6 +189,11 @@ def search_sender_uids(mail: imaplib.IMAP4_SSL, senders: set[str]) -> list[bytes
             f"({result}: {_imap_response_text(data)})"
         )
     return data[0].split() if data and data[0] else []
+
+
+def _sorted_uids(uids: list[bytes]) -> list[bytes]:
+    """Сортирует UID, не падая из-за неожиданного ответа IMAP."""
+    return sorted(uids, key=lambda value: int(value) if value.isdigit() else value)
 
 
 def parse_sender_addresses(from_header: str) -> list[str]:
@@ -308,13 +294,16 @@ def main() -> int:
             except ValueError as error:
                 LOGGER.warning("Письмо UID %s не выгружено: %s", uid, error)
                 LOGGER.warning("Начало письма: %s", _body_preview(mail_text))
-                if not is_known_transaction_format(message, mail_text):
-                    newly_processed.add(uid)
-                    LOGGER.info(
-                        "UID %s помечен как просмотренный: это не поддерживаемое "
-                        "уведомление об операции.",
-                        uid,
-                    )
+                # Ошибку разбора никогда не записываем в processed_uids.json.
+                # Формат письма может стать поддерживаемым после обновления
+                # парсера, и такой UID должен повторно проверяться. Это также
+                # восстанавливает письма, которые были ошибочно пропущены
+                # предыдущей версией сборщика.
+                LOGGER.info(
+                    "UID %s не добавлен в журнал: письмо будет повторно "
+                    "проверено в следующем запуске.",
+                    uid,
+                )
                 continue
 
             newly_processed.add(uid)
