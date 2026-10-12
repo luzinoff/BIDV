@@ -28,6 +28,9 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Проверить парсер
+        run: python test_parser.py
+
       - name: Прочитать почту и сохранить JSON
         env:
           YANDEX_EMAIL: ${{ secrets.YANDEX_EMAIL }}
