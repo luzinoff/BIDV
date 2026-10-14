@@ -1,0 +1,8 @@
+{
+  "transaction_type": "within_bidv_transfer",
+  "amount_vnd": 102000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "HO KINH DOANH ME COFFEE",
+  "transaction_at": "2026-10-12T19:36:53",
+  "reference_number": "0552by64-8CnnJhxYu"
+}

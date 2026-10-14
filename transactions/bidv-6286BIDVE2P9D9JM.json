@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 20000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "PHAM TRONG DONG",
+  "transaction_at": "2026-10-13T21:36:10",
+  "reference_number": "6286BIDVE2P9D9JM"
+}

@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 120000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "TIUTIN DENIS",
+  "transaction_at": "2026-10-11T09:42:11",
+  "reference_number": "020097048810110942112026aok1188480"
+}

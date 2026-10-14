@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 55000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "BUI KIM HIEP",
+  "transaction_at": "2026-10-12T22:14:17",
+  "reference_number": "020097048810122214172026mwfo517068"
+}

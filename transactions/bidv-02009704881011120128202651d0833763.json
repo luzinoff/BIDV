@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 42000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "KHARITONOV EVGENII",
+  "transaction_at": "2026-10-11T12:01:28",
+  "reference_number": "02009704881011120128202651d0833763"
+}
