@@ -168,10 +168,19 @@ def check(text: str, expected: dict) -> None:
         "reference_number",
     }
     assert set(actual) == allowed, actual
-    forbidden_fragments = ("account", "card", "ip", "operating", "remark", "os")
-    assert not any(
-        fragment in key.casefold() for key in actual for fragment in forbidden_fragments
-    ), actual
+    forbidden_field_names = {
+        "account",
+        "account_number",
+        "card",
+        "card_number",
+        "ip",
+        "ip_address",
+        "operating_system",
+        "os",
+        "remark",
+        "transaction_remark",
+    }
+    assert not (set(actual) & forbidden_field_names), actual
 
 
 def main() -> None:
