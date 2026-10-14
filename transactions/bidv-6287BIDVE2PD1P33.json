@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 30000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "PHAM THI CUC",
+  "transaction_at": "2026-10-14T19:11:39",
+  "reference_number": "6287BIDVE2PD1P33"
+}

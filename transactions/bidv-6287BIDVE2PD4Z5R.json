@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 99000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "QUAN NEM HUNG HOA_HO THIEN THI",
+  "transaction_at": "2026-10-14T20:35:21",
+  "reference_number": "6287BIDVE2PD4Z5R"
+}
