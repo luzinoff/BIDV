@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 105000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "Xang Dau Cuong Thinh",
+  "transaction_at": "2026-10-15T14:32:15",
+  "reference_number": "020097048810151432152026d2ne503004"
+}

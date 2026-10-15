@@ -1,0 +1,8 @@
+{
+  "transaction_type": "within_bidv_transfer",
+  "amount_vnd": 65000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "PHO HONG",
+  "transaction_at": "2026-10-15T15:50:00",
+  "reference_number": "0551cN4G-8Cs7O1T4Y"
+}
