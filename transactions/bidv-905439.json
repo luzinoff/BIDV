@@ -1,0 +1,8 @@
+{
+  "transaction_type": "card_payment",
+  "amount_vnd": 162200,
+  "recipient_type": "merchant",
+  "recipient_name": "Shopee",
+  "transaction_at": "2026-10-16T19:05:52",
+  "reference_number": "905439"
+}
