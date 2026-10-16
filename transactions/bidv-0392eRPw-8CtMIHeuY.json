@@ -1,0 +1,8 @@
+{
+  "transaction_type": "within_bidv_transfer",
+  "amount_vnd": 203000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "VOSTRETSOV KIRILL",
+  "transaction_at": "2026-10-16T11:24:18",
+  "reference_number": "0392eRPw-8CtMIHeuY"
+}

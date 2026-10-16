@@ -1,0 +1,8 @@
+{
+  "transaction_type": "within_bidv_transfer",
+  "amount_vnd": 1200000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "KOVALEVA TATIANA",
+  "transaction_at": "2026-10-16T11:36:07",
+  "reference_number": "03933k0w-8CtN4KB4Q"
+}
