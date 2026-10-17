@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 210000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "DO HONG CUONG",
+  "transaction_at": "2026-10-17T20:29:36",
+  "reference_number": "6290BIDVE25Y38CP"
+}
