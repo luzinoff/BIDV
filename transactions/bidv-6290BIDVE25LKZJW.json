@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 162000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "PAYOO STARBUCKS",
+  "transaction_at": "2026-10-17T14:36:53",
+  "reference_number": "6290BIDVE25LKZJW"
+}
