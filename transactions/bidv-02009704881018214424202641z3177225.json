@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 43000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "GRINEV ALEKSANDR",
+  "transaction_at": "2026-10-18T21:44:24",
+  "reference_number": "02009704881018214424202641z3177225"
+}
