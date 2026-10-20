@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 24000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "NGUYEN THI DAU_NGUYEN THI DAU",
+  "transaction_at": "2026-10-20T15:37:57",
+  "reference_number": "6293BIDVE25FKRQB"
+}
