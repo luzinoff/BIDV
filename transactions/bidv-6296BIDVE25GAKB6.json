@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 275000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "CONG TY TNHH SUSHI TAKE AWAY .",
+  "transaction_at": "2026-10-23T18:34:43",
+  "reference_number": "6296BIDVE25GAKB6"
+}

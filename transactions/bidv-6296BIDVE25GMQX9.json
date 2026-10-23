@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 30000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "TRA SUA 20K_TRAN TRUNG HIEU",
+  "transaction_at": "2026-10-23T18:58:48",
+  "reference_number": "6296BIDVE25GMQX9"
+}
