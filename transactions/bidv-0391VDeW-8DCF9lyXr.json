@@ -1,0 +1,8 @@
+{
+  "transaction_type": "within_bidv_transfer",
+  "amount_vnd": 20500,
+  "recipient_type": "beneficiary",
+  "recipient_name": "NEKRASOV IURII",
+  "transaction_at": "2026-10-28T21:22:03",
+  "reference_number": "0391VDeW-8DCF9lyXr"
+}

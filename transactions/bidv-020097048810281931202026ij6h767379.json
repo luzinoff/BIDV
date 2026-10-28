@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 150000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "CONG TY TNHH KINH DOANH XUAT NHAP KHAU VIET DUONG",
+  "transaction_at": "2026-10-28T19:31:20",
+  "reference_number": "020097048810281931202026ij6h767379"
+}
