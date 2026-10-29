@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 40000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "CONG TY TNHH NT SPORT UNITE",
+  "transaction_at": "2026-10-29T14:10:47",
+  "reference_number": "020097048810291410472026h6pl091225"
+}
