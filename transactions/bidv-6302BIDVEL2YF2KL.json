@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 70000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "BANH CAN BANH XEO HAI PHUONG NHA TRANG_NGUYEN TRAN LINH NGOC",
+  "transaction_at": "2026-10-29T21:36:26",
+  "reference_number": "6302BIDVEL2YF2KL"
+}
