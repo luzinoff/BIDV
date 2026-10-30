@@ -1,0 +1,8 @@
+{
+  "transaction_type": "within_bidv_transfer",
+  "amount_vnd": 34500,
+  "recipient_type": "beneficiary",
+  "recipient_name": "CN NHA TRANG CONG TY TNHH VIET Y HA NOICENTER",
+  "transaction_at": "2026-10-30T20:08:00",
+  "reference_number": "0553G78U-8DFCvMZNy"
+}
