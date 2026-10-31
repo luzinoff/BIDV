@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 32000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "CTY TNHH TM VA DV TAKA",
+  "transaction_at": "2026-10-31T13:58:06",
+  "reference_number": "020097048810311358052026btgk686979"
+}
