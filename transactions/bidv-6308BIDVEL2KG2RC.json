@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 98000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "GO Nha Trang",
+  "transaction_at": "2026-11-04T16:56:08",
+  "reference_number": "6308BIDVEL2KG2RC"
+}
