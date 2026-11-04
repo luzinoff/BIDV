@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 33000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "TRUONG VAN CHAU",
+  "transaction_at": "2026-11-04T09:50:08",
+  "reference_number": "0200970488110409500720263mfv757103"
+}
