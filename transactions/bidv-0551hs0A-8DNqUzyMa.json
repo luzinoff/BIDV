@@ -1,0 +1,8 @@
+{
+  "transaction_type": "within_bidv_transfer",
+  "amount_vnd": 10000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "HO KINH DOANH SINH TO VAN",
+  "transaction_at": "2026-11-05T12:25:39",
+  "reference_number": "0551hs0A-8DNqUzyMa"
+}
