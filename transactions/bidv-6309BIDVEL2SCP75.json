@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 25000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "LE THI UYEN",
+  "transaction_at": "2026-11-05T16:39:02",
+  "reference_number": "6309BIDVEL2SCP75"
+}
