@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 14000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "HO KINH DOANH SIEU THI SIGO MART",
+  "transaction_at": "2026-11-06T17:47:20",
+  "reference_number": "020097048811061747192026w2jd760219"
+}
