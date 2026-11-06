@@ -1,0 +1,8 @@
+{
+  "transaction_type": "within_bidv_transfer",
+  "amount_vnd": 30000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "LE DAI AN",
+  "transaction_at": "2026-11-06T20:05:07",
+  "reference_number": "05537aig-8DPqu31rq"
+}
