@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 90000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "KHOKHLOV VLADIMIR",
+  "transaction_at": "2026-11-07T17:22:44",
+  "reference_number": "0200970488110717224420261oms644920"
+}

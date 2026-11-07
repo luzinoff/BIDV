@@ -1,0 +1,9 @@
+{
+  "side": "sell",
+  "fiat_amount": 250000,
+  "fiat_currency": "VND",
+  "crypto_amount": 9.703,
+  "crypto": "USDT",
+  "created_at": "2026-08-27T12:15:55Z",
+  "order_tail": "7216"
+}

@@ -1,0 +1,9 @@
+{
+  "side": "buy",
+  "fiat_amount": 7000,
+  "fiat_currency": "RUB",
+  "crypto_amount": 80.5894,
+  "crypto": "USDT",
+  "created_at": "2026-09-12T03:00:14Z",
+  "order_tail": "2976"
+}
