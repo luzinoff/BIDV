@@ -29,7 +29,9 @@ jobs:
           python-version: "3.12"
 
       - name: Проверить парсер
-        run: python test_parser.py
+        run: |
+          python test_parser.py
+          python test_bybit_parser.py
 
       - name: Прочитать почту и сохранить JSON
         env:
@@ -39,6 +41,9 @@ jobs:
           YANDEX_MAIL_FOLDER: ${{ vars.YANDEX_MAIL_FOLDER }}
           STATE_FILE: processed_uids.json
           TRANSACTIONS_DIR: transactions
+          BYBIT_MAIL_FOLDER: ${{ vars.BYBIT_MAIL_FOLDER }}
+          BYBIT_STATE_FILE: processed_uids_bybit.json
+          BYBIT_DIR: bybit
         run: python main.py
 
       - name: Сохранить изменения в репозиторий
@@ -46,9 +51,10 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add processed_uids.json transactions/
+          git add --ignore-errors processed_uids_bybit.json bybit/ 2>/dev/null || true
           if git diff --staged --quiet; then
             echo "Нет новых транзакций"
             exit 0
           fi
-          git commit -m "chore: добавить новые транзакции BIDV"
+          git commit -m "chore: добавить новые транзакции BIDV и Bybit"
           git push

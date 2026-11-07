@@ -12,8 +12,10 @@ import logging
 import os
 from pathlib import Path
 import re
+import time
 from typing import Iterator
 
+from bybit_parser import P2POrder, parse_bybit_p2p, side_from_subject
 from parser import Transaction, parse_bidv_notification
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
@@ -22,6 +24,12 @@ LOGGER = logging.getLogger(__name__)
 IMAP_HOST = "imap.yandex.ru"
 STATE_FILE_NAME = "processed_uids.json"
 TRANSACTIONS_DIR = "transactions"
+BYBIT_STATE_FILE_NAME = "processed_uids_bybit.json"
+BYBIT_DIR = "bybit"
+BYBIT_DEFAULT_FOLDER = "Bybit"
+BYBIT_DEFAULT_SENDER = "noreply@email-service.bybit.com"
+CONNECT_ATTEMPTS = 3
+CONNECT_PAUSE_SECONDS = 15
 
 
 def required_env(name: str) -> str:
@@ -218,35 +226,79 @@ def read_message(mail: imaplib.IMAP4_SSL, uid: str) -> Message | None:
     return None
 
 
-def main() -> int:
-    LOGGER.info("Запуск сборщика...")
+def save_bybit_order(orders_dir: Path, order: P2POrder) -> str:
+    """Сохраняет P2P-ордер Bybit; не перезаписывает уже существующий JSON."""
+    orders_dir.mkdir(exist_ok=True)
+    file_path = orders_dir / f"bybit-{order.file_id}.json"
+    if file_path.exists():
+        return "already_exists"
+    file_path.write_text(
+        json.dumps(order.as_dict(), ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
+    return "saved"
+
+
+def connect(email_address: str, password: str) -> imaplib.IMAP4_SSL:
+    """Подключается к Яндексу, повторяя попытку при обрыве соединения.
+
+    Яндекс иногда рвёт соединение на CAPABILITY или LOGIN; через несколько
+    секунд вход обычно проходит. Неверный пароль повторять бессмысленно.
+    """
+    last_error: Exception | None = None
+    for attempt in range(1, CONNECT_ATTEMPTS + 1):
+        mail: imaplib.IMAP4_SSL | None = None
+        try:
+            LOGGER.info("Подключение к %s (попытка %d)...", IMAP_HOST, attempt)
+            mail = imaplib.IMAP4_SSL(IMAP_HOST, timeout=30)
+            LOGGER.info("Авторизация в почте...")
+            mail.login(email_address, password)
+            LOGGER.info("Авторизация успешна")
+            return mail
+        except imaplib.IMAP4.error as error:
+            if "auth" in str(error).casefold() or "invalid" in str(error).casefold():
+                raise
+            last_error = error
+        except (imaplib.IMAP4.abort, OSError) as error:
+            last_error = error
+        if mail is not None:
+            try:
+                mail.logout()
+            except Exception:
+                pass
+        LOGGER.warning("Соединение с почтой не удалось: %s", last_error)
+        if attempt < CONNECT_ATTEMPTS:
+            time.sleep(CONNECT_PAUSE_SECONDS)
+    raise RuntimeError(f"Не удалось подключиться к почте: {last_error}")
+
+
+def select_folder(mail: imaplib.IMAP4_SSL, folder: str) -> bool:
+    LOGGER.info("Открытие папки '%s'...", folder)
+    result, _ = mail.select(f'"{folder}"', readonly=True)
+    return result == "OK"
+
+
+def collect_bidv(mail: imaplib.IMAP4_SSL) -> None:
     senders = configured_senders()
-    password = required_env("YANDEX_APP_PASSWORD")
     mail_folder = os.getenv("YANDEX_MAIL_FOLDER", "INBOX").strip() or "INBOX"
     state_path = Path(os.getenv("STATE_FILE", STATE_FILE_NAME))
     transactions_dir = Path(os.getenv("TRANSACTIONS_DIR", TRANSACTIONS_DIR))
     processed_uids = load_state(state_path)
     newly_processed: set[str] = set()
 
-    LOGGER.info("Подключение к %s...", IMAP_HOST)
-    mail = imaplib.IMAP4_SSL(IMAP_HOST, timeout=30)
-    try:
-        LOGGER.info("Авторизация в почте...")
-        mail.login(required_env("YANDEX_EMAIL"), password)
-        LOGGER.info("Авторизация успешна")
-        LOGGER.info("Открытие папки '%s'...", mail_folder)
-        result, _ = mail.select(f'"{mail_folder}"', readonly=True)
-        if result != "OK":
-            raise RuntimeError(f"Не удалось открыть папку почты: {mail_folder}")
-        LOGGER.info("Папка открыта")
-        LOGGER.info("Поиск писем от %s...", sender_list_text(senders))
-        all_uids = search_sender_uids(mail, senders)
-        LOGGER.info(
-            "Найдено писем в выбранной папке: %d, уже обработано: %d",
-            len(all_uids),
-            len(processed_uids),
-        )
+    LOGGER.info("=== BIDV ===")
+    if not select_folder(mail, mail_folder):
+        raise RuntimeError(f"Не удалось открыть папку почты: {mail_folder}")
+    LOGGER.info("Папка открыта")
+    LOGGER.info("Поиск писем от %s...", sender_list_text(senders))
+    all_uids = search_sender_uids(mail, senders)
+    LOGGER.info(
+        "Найдено писем в выбранной папке: %d, уже обработано: %d",
+        len(all_uids),
+        len(processed_uids),
+    )
 
+    try:
         for raw_uid in all_uids:
             uid = raw_uid.decode("ascii")
             if uid in processed_uids:
@@ -259,7 +311,7 @@ def main() -> int:
                 # запуске, вместо потери всей партии из-за краткого сбоя Яндекса.
                 LOGGER.warning("Соединение IMAP прервано на UID %s: %s", uid, error)
                 LOGGER.warning("Остальные письма будут обработаны при следующем запуске.")
-                break
+                raise
             if message is None:
                 LOGGER.warning("Не удалось прочитать письмо UID %s", uid)
                 continue
@@ -296,9 +348,7 @@ def main() -> int:
                 LOGGER.warning("Начало письма: %s", _body_preview(mail_text))
                 # Ошибку разбора никогда не записываем в processed_uids.json.
                 # Формат письма может стать поддерживаемым после обновления
-                # парсера, и такой UID должен повторно проверяться. Это также
-                # восстанавливает письма, которые были ошибочно пропущены
-                # предыдущей версией сборщика.
+                # парсера, и такой UID должен повторно проверяться.
                 LOGGER.info(
                     "UID %s не добавлен в журнал: письмо будет повторно "
                     "проверено в следующем запуске.",
@@ -309,15 +359,122 @@ def main() -> int:
             newly_processed.add(uid)
             LOGGER.info("UID %s: %s (%s)", uid, outcome, transaction.reference_number)
     finally:
+        if newly_processed:
+            save_state(state_path, processed_uids | newly_processed)
+        LOGGER.info("BIDV: обработано новых писем: %d", len(newly_processed))
+
+
+def fetch_headers(mail: imaplib.IMAP4_SSL, uids: list[str]) -> dict[str, Message]:
+    """Читает только From и Subject пачкой, не скачивая письма целиком."""
+    headers: dict[str, Message] = {}
+    for start in range(0, len(uids), 200):
+        chunk = uids[start : start + 200]
+        result, payload = mail.uid(
+            "fetch", ",".join(chunk), "(UID BODY.PEEK[HEADER.FIELDS (FROM SUBJECT)])"
+        )
+        if result != "OK":
+            raise RuntimeError(f"Не удалось прочитать заголовки ({result})")
+        for item in payload or []:
+            if not (isinstance(item, tuple) and len(item) > 1):
+                continue
+            meta = item[0].decode("ascii", errors="replace") if isinstance(item[0], bytes) else str(item[0])
+            match = re.search(r"UID (\d+)", meta)
+            if match and isinstance(item[1], bytes):
+                headers[match.group(1)] = email.message_from_bytes(item[1])
+    return headers
+
+
+def collect_bybit(mail: imaplib.IMAP4_SSL) -> None:
+    """Выгружает выполненные P2P-ордера Bybit из отдельной папки.
+
+    UID у каждой папки свои, поэтому журнал отдельный. Письма с другими темами
+    или от других отправителей сразу записываются в журнал: они никогда не
+    станут ордерами, и скачивать их каждый час незачем.
+    """
+    folder = os.getenv("BYBIT_MAIL_FOLDER", "").strip() or BYBIT_DEFAULT_FOLDER
+    raw_sender = os.getenv("BYBIT_SENDER", "").strip() or BYBIT_DEFAULT_SENDER
+    senders = {item.casefold() for item in re.split(r"[,;\s]+", raw_sender) if item}
+    state_path = Path(os.getenv("BYBIT_STATE_FILE", BYBIT_STATE_FILE_NAME))
+    orders_dir = Path(os.getenv("BYBIT_DIR", BYBIT_DIR))
+    processed_uids = load_state(state_path)
+    newly_processed: set[str] = set()
+    saved = 0
+
+    LOGGER.info("=== Bybit ===")
+    if not select_folder(mail, folder):
+        LOGGER.warning("Папка '%s' не открылась — Bybit пропущен.", folder)
+        return
+    result, data = mail.uid("search", None, "ALL")
+    if result != "OK":
+        raise RuntimeError(f"Не удалось получить список писем Bybit ({result})")
+    all_uids = [uid.decode("ascii") for uid in (data[0].split() if data and data[0] else [])]
+    pending = [uid for uid in all_uids if uid not in processed_uids]
+    LOGGER.info("Писем в папке: %d, новых: %d", len(all_uids), len(pending))
+
+    try:
+        for uid, header in fetch_headers(mail, pending).items():
+            subject = decode_mime_header(header.get("Subject"))
+            from_header = decode_mime_header(header.get("From"))
+            if not sender_matches(from_header, senders) or side_from_subject(subject) is None:
+                newly_processed.add(uid)
+                continue
+
+            message = read_message(mail, uid)
+            if message is None:
+                LOGGER.warning("Не удалось прочитать письмо Bybit UID %s", uid)
+                continue
+            mail_text = ""
+            try:
+                mail_text = text_from_message(message)
+                order = parse_bybit_p2p(subject, mail_text)
+            except ValueError as error:
+                LOGGER.warning("Письмо Bybit UID %s не выгружено: %s", uid, error)
+                LOGGER.warning("Начало письма: %s", _body_preview(mail_text))
+                continue
+            outcome = save_bybit_order(orders_dir, order)
+            saved += outcome == "saved"
+            newly_processed.add(uid)
+            LOGGER.info(
+                "UID %s: %s %s %s за %s %s (%s)",
+                uid,
+                order.side,
+                order.crypto_amount,
+                order.crypto,
+                order.fiat_amount,
+                order.fiat_currency,
+                outcome,
+            )
+    finally:
+        if newly_processed:
+            save_state(state_path, processed_uids | newly_processed)
+        LOGGER.info(
+            "Bybit: новых ордеров: %d, просмотрено писем: %d", saved, len(newly_processed)
+        )
+
+
+def main() -> int:
+    LOGGER.info("Запуск сборщика...")
+    configured_senders()  # проверить настройку до подключения к почте
+    mail = connect(required_env("YANDEX_EMAIL"), required_env("YANDEX_APP_PASSWORD"))
+    failed = False
+    try:
+        for collect in (collect_bidv, collect_bybit):
+            try:
+                collect(mail)
+            except (imaplib.IMAP4.abort, imaplib.IMAP4.error, OSError) as error:
+                # Обрыв на одной папке не должен терять то, что уже собрано.
+                LOGGER.warning("Сбор прерван обрывом соединения: %s", error)
+                LOGGER.warning("Остальное будет обработано при следующем запуске.")
+                break
+            except RuntimeError as error:
+                LOGGER.error("%s", error)
+                failed = True
+    finally:
         try:
             mail.logout()
         except Exception:
             pass
-
-    if newly_processed:
-        save_state(state_path, processed_uids | newly_processed)
-    LOGGER.info("Обработано новых писем: %d", len(newly_processed))
-    return 0
+    return 1 if failed else 0
 
 
 if __name__ == "__main__":
