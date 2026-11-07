@@ -381,6 +381,18 @@ def fetch_headers(mail: imaplib.IMAP4_SSL, uids: list[str]) -> dict[str, Message
             match = re.search(r"UID (\d+)", meta)
             if match and isinstance(item[1], bytes):
                 headers[match.group(1)] = email.message_from_bytes(item[1])
+    # Яндекс иногда пишет UID после тела ответа, и в пачке письмо не опознать.
+    # Такие письма дочитываем по одному: там UID известен заранее.
+    for uid in uids:
+        if uid in headers:
+            continue
+        result, payload = mail.uid("fetch", uid, "(BODY.PEEK[HEADER.FIELDS (FROM SUBJECT)])")
+        for item in payload or [] if result == "OK" else []:
+            if isinstance(item, tuple) and len(item) > 1 and isinstance(item[1], bytes):
+                headers[uid] = email.message_from_bytes(item[1])
+                break
+        else:
+            LOGGER.warning("Не удалось прочитать заголовки письма UID %s", uid)
     return headers
 
 
@@ -440,7 +452,7 @@ def collect_bybit(mail: imaplib.IMAP4_SSL) -> None:
                 order.side,
                 order.crypto_amount,
                 order.crypto,
-                order.fiat_amount,
+                order.as_dict()["fiat_amount"],
                 order.fiat_currency,
                 outcome,
             )
