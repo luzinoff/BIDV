@@ -16,7 +16,7 @@ import time
 from typing import Iterator
 
 from bybit_parser import P2POrder, parse_bybit_p2p, side_from_subject
-from parser import Transaction, parse_bidv_notification
+from parser import SkipNotification, Transaction, parse_bidv_notification
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 LOGGER = logging.getLogger(__name__)
@@ -343,6 +343,12 @@ def collect_bidv(mail: imaplib.IMAP4_SSL) -> None:
                     transaction.amount_vnd,
                 )
                 outcome = save_transaction(transactions_dir, transaction)
+            except SkipNotification as reason:
+                # Письмо понятно, но в бюджет не идёт: запоминаем, чтобы
+                # не перечитывать его каждый час.
+                LOGGER.info("Письмо UID %s пропущено навсегда: %s", uid, reason)
+                newly_processed.add(uid)
+                continue
             except ValueError as error:
                 LOGGER.warning("Письмо UID %s не выгружено: %s", uid, error)
                 LOGGER.warning("Начало письма: %s", _body_preview(mail_text))

@@ -32,6 +32,14 @@ class Transaction:
 _FIELD_END = r"\s*(?:\r?\n|$)"
 
 
+class SkipNotification(ValueError):
+    """Письмо BIDV понятно, но выгружать его не нужно никогда.
+
+    Такие письма сборщик запоминает в журнале и больше не перечитывает,
+    в отличие от обычной ValueError (незнакомый формат — проверить позже).
+    """
+
+
 def _value_after_label(text: str, *labels: str) -> str | None:
     """Возвращает первую непустую строку после двуязычной метки."""
     for label in labels:
@@ -186,6 +194,10 @@ def _read_card_notification(text: str) -> Transaction:
         _slash_field(text, "Giao dịch", "Transaction type"),
         "Transaction type",
     )
+    original = _slash_field(text, "Số tiền giao dịch gốc", "Original amount")
+    if original and not re.search(r"\bVND\b", original, flags=re.IGNORECASE):
+        # В письме только сумма в валюте; сколько донгов списано, не указано.
+        raise SkipNotification(f"оплата картой в валюте ({original.strip()})")
     amount = _require(
         _slash_amount(text, "Số tiền giao dịch gốc", "Original amount"),
         "Original amount",
@@ -236,6 +248,9 @@ def parse_bidv_notification(text: str) -> Transaction:
     Неугаданные шаблоны намеренно завершаются ошибкой и не выгружаются.
     """
     normalized = text.replace(" ", " ").replace("\r\n", "\n")
+    folded = re.sub(r"\s+", " ", normalized).casefold()
+    if "không thành công" in folded or "unsuccessful transaction" in folded:
+        raise SkipNotification("неуспешная операция по карте")
     # Уведомления bidvcare используют компактные метки вида «Giao dịch/Transaction type: ...».
     if _slash_field(normalized, "Giao dịch", "Transaction type") and _slash_field(normalized, "Tại", "At"):
         return _read_card_notification(normalized)

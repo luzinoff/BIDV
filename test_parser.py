@@ -1,6 +1,6 @@
 """Офлайн-проверка трёх предоставленных шаблонов BIDV."""
 
-from parser import parse_bidv_notification
+from parser import SkipNotification, parse_bidv_notification
 
 
 INTERBANK = """Thông báo giao dịch thành công!
@@ -248,7 +248,30 @@ def main() -> None:
         "reference_number": "905413",
     }
     check(CARD_PAYMENT, card_expected)
-    print("OK: пять шаблонов разобраны, чувствительные поля отсутствуют")
+
+    # Эти письма понятны, но в бюджет не идут — сборщик запоминает их навсегда.
+    foreign = CARD_PAYMENT.replace("159,103 VND", "10.80 EUR")
+    unsuccessful = (
+        CARD_PAYMENT.replace("GIAO DỊCH THẺ THÀNH CÔNG", "GIAO DỊCH THẺ KHÔNG THÀNH CÔNG")
+        .replace("NOTIFICATION OF TRANSACTION", "NOTIFICATION OF UNSUCCESSFUL TRANSACTION")
+    )
+    for name, text in (("валюта", foreign), ("неуспешная", unsuccessful)):
+        try:
+            parse_bidv_notification(text)
+        except SkipNotification:
+            pass
+        else:
+            raise AssertionError(f"{name}: ожидался SkipNotification")
+
+    # Незнакомый статус — обычная ошибка: письмо проверится ещё раз.
+    try:
+        parse_bidv_notification(CARD_PAYMENT.replace("Thành công/ Successfully", "Đang xử lý/ Pending"))
+    except SkipNotification:
+        raise AssertionError("незнакомый статус не должен пропускаться навсегда")
+    except ValueError:
+        pass
+    print("OK: пять шаблонов разобраны, чувствительные поля отсутствуют, "
+          "неуспешные и валютные письма пропускаются")
 
 
 if __name__ == "__main__":
