@@ -373,7 +373,10 @@ def fetch_headers(mail: imaplib.IMAP4_SSL, uids: list[str]) -> dict[str, Message
             "fetch", ",".join(chunk), "(UID BODY.PEEK[HEADER.FIELDS (FROM SUBJECT)])"
         )
         if result != "OK":
-            raise RuntimeError(f"Не удалось прочитать заголовки ({result})")
+            # Яндекс отказывает всей пачке, если одно письмо не читается.
+            # Тогда ниже каждое письмо пачки дочитывается по отдельности.
+            LOGGER.warning("Заголовки пачки не прочитались (%s), читаю по одному", result)
+            continue
         for item in payload or []:
             if not (isinstance(item, tuple) and len(item) > 1):
                 continue
@@ -387,12 +390,18 @@ def fetch_headers(mail: imaplib.IMAP4_SSL, uids: list[str]) -> dict[str, Message
         if uid in headers:
             continue
         result, payload = mail.uid("fetch", uid, "(BODY.PEEK[HEADER.FIELDS (FROM SUBJECT)])")
-        for item in payload or [] if result == "OK" else []:
+        for item in (payload or []) if result == "OK" else []:
             if isinstance(item, tuple) and len(item) > 1 and isinstance(item[1], bytes):
                 headers[uid] = email.message_from_bytes(item[1])
                 break
         else:
-            LOGGER.warning("Не удалось прочитать заголовки письма UID %s", uid)
+            LOGGER.warning(
+                "Письмо UID %s в папке Bybit не читается (%s %s) — пропущено, "
+                "будет проверено в следующем запуске",
+                uid,
+                result,
+                _imap_response_text(payload or []),
+            )
     return headers
 
 
