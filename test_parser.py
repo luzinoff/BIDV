@@ -250,12 +250,17 @@ def main() -> None:
     check(CARD_PAYMENT, card_expected)
 
     # Эти письма понятны, но в бюджет не идут — сборщик запоминает их навсегда.
-    foreign = CARD_PAYMENT.replace("159,103 VND", "10.80 EUR")
+    foreign = CARD_PAYMENT.replace("159,103 VND", "22.22 USD").replace("Lazada VN", "ANTHROPIC* CLAUDE SUB")
+    got = parse_bidv_notification(foreign).as_dict()
+    want = dict(card_expected, transaction_type="card_payment_foreign", amount_vnd=0,
+                recipient_name="ANTHROPIC* CLAUDE SUB", original_amount="22.22", original_currency="USD")
+    if got != want:
+        raise AssertionError(f"валютная оплата: {got}")
     unsuccessful = (
         CARD_PAYMENT.replace("GIAO DỊCH THẺ THÀNH CÔNG", "GIAO DỊCH THẺ KHÔNG THÀNH CÔNG")
         .replace("NOTIFICATION OF TRANSACTION", "NOTIFICATION OF UNSUCCESSFUL TRANSACTION")
     )
-    for name, text in (("валюта", foreign), ("неуспешная", unsuccessful)):
+    for name, text in (("неуспешная", unsuccessful),):
         try:
             parse_bidv_notification(text)
         except SkipNotification:
@@ -271,7 +276,7 @@ def main() -> None:
     except ValueError:
         pass
     print("OK: пять шаблонов разобраны, чувствительные поля отсутствуют, "
-          "неуспешные и валютные письма пропускаются")
+          "валютные разобраны, неуспешные пропускаются")
 
 
 if __name__ == "__main__":

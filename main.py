@@ -338,9 +338,11 @@ def collect_bidv(mail: imaplib.IMAP4_SSL) -> None:
                 mail_text = text_from_message(message)
                 transaction = parse_bidv_notification(mail_text)
                 LOGGER.info(
-                    "Распознано: %s на %d VND",
+                    "Распознано: %s на %s",
                     transaction.transaction_type,
-                    transaction.amount_vnd,
+                    f"{transaction.original_amount} {transaction.original_currency}"
+                    if transaction.original_currency
+                    else f"{transaction.amount_vnd} VND",
                 )
                 outcome = save_transaction(transactions_dir, transaction)
             except SkipNotification as reason:

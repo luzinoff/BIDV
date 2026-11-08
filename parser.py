@@ -17,9 +17,13 @@ class Transaction:
     recipient_name: str
     transaction_at: str
     reference_number: str
+    # Только для оплаты картой в валюте: сумма в донгах в письме не указана
+    # (банк спишет её через 1–2 дня вместе с комиссией), amount_vnd = 0.
+    original_amount: str = ""
+    original_currency: str = ""
 
     def as_dict(self) -> dict[str, str | int]:
-        return {
+        out: dict[str, str | int] = {
             "transaction_type": self.transaction_type,
             "amount_vnd": self.amount_vnd,
             "recipient_type": self.recipient_type,
@@ -27,6 +31,10 @@ class Transaction:
             "transaction_at": self.transaction_at,
             "reference_number": self.reference_number,
         }
+        if self.original_currency:
+            out["original_amount"] = self.original_amount
+            out["original_currency"] = self.original_currency
+        return out
 
 
 _FIELD_END = r"\s*(?:\r?\n|$)"
@@ -194,14 +202,23 @@ def _read_card_notification(text: str) -> Transaction:
         _slash_field(text, "Giao dịch", "Transaction type"),
         "Transaction type",
     )
-    original = _slash_field(text, "Số tiền giao dịch gốc", "Original amount")
-    if original and not re.search(r"\bVND\b", original, flags=re.IGNORECASE):
-        # В письме только сумма в валюте; сколько донгов списано, не указано.
-        raise SkipNotification(f"оплата картой в валюте ({original.strip()})")
-    amount = _require(
-        _slash_amount(text, "Số tiền giao dịch gốc", "Original amount"),
+    original = _require(
+        _slash_field(text, "Số tiền giao dịch gốc", "Original amount"),
         "Original amount",
     )
+    foreign = None
+    if not re.search(r"\bVND\b", str(original), flags=re.IGNORECASE):
+        # Оплата в валюте: в письме только сумма в валюте. Донги вместе с
+        # комиссией банк спишет позже — их впишут вручную при импорте.
+        foreign = re.fullmatch(r"\s*([\d.,]+)\s*([A-Z]{3})\s*", str(original))
+        if not foreign:
+            raise ValueError(f"Незнакомый формат суммы в валюте: {original!r}")
+        amount = 0
+    else:
+        amount = _require(
+            _slash_amount(text, "Số tiền giao dịch gốc", "Original amount"),
+            "Original amount",
+        )
     transaction_time = _require(
         _slash_field(text, "Vào lúc", "Time"),
         "Time",
@@ -219,12 +236,14 @@ def _read_card_notification(text: str) -> Transaction:
         raise ValueError(f"Неподтверждённый статус операции: {status!r}")
 
     return Transaction(
-        transaction_type="card_payment",
+        transaction_type="card_payment_foreign" if foreign else "card_payment",
         amount_vnd=int(amount),
         recipient_type="merchant",
         recipient_name=str(recipient_name),
         transaction_at=_parse_datetime(str(transaction_time)),
         reference_number=str(approval_code),
+        original_amount=foreign.group(1) if foreign else "",
+        original_currency=foreign.group(2) if foreign else "",
     )
 
 
