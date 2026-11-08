@@ -1,0 +1,10 @@
+{
+  "transaction_type": "card_payment_foreign",
+  "amount_vnd": 0,
+  "recipient_type": "merchant",
+  "recipient_name": "ANTHROPIC* CLAUDE SUB",
+  "transaction_at": "2026-10-23T09:36:56",
+  "reference_number": "905440",
+  "original_amount": "22.22",
+  "original_currency": "USD"
+}

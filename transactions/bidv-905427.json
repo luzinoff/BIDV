@@ -1,0 +1,10 @@
+{
+  "transaction_type": "card_payment_foreign",
+  "amount_vnd": 0,
+  "recipient_type": "merchant",
+  "recipient_name": "NETCUP",
+  "transaction_at": "2026-09-22T22:37:29",
+  "reference_number": "905427",
+  "original_amount": "10.80",
+  "original_currency": "EUR"
+}
