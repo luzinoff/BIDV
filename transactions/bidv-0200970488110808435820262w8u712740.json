@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 30000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "CT TNHH TM VA DV NGOC THACH 205 NTT",
+  "transaction_at": "2026-11-08T08:43:58",
+  "reference_number": "0200970488110808435820262w8u712740"
+}
