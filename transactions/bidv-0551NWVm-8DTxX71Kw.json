@@ -1,0 +1,8 @@
+{
+  "transaction_type": "qr_pay",
+  "amount_vnd": 85000,
+  "recipient_type": "merchant",
+  "recipient_name": "P~26110902-2~~3",
+  "transaction_at": "2026-11-09T12:53:02",
+  "reference_number": "0551NWVm-8DTxX71Kw"
+}
