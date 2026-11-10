@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 833000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "CONG TY CO PHAN BENH VIEN QUOC TE VIET HAN",
+  "transaction_at": "2026-11-10T09:36:45",
+  "reference_number": "0200970488111009364420265k24590926"
+}
