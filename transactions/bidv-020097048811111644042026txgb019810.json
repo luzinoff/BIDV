@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 40000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "HKD TRAI CAY THUY 83 SINH TO TRAI CAY TH",
+  "transaction_at": "2026-11-11T16:44:04",
+  "reference_number": "020097048811111644042026txgb019810"
+}
