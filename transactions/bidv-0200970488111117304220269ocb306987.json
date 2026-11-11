@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 120000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "HKD HUNG PHU SPORT CENTER",
+  "transaction_at": "2026-11-11T17:30:43",
+  "reference_number": "0200970488111117304220269ocb306987"
+}
