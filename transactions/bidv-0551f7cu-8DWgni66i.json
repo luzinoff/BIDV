@@ -1,0 +1,8 @@
+{
+  "transaction_type": "qr_pay",
+  "amount_vnd": 132300,
+  "recipient_type": "merchant",
+  "recipient_name": "VIETTEL TELECOM",
+  "transaction_at": "2026-11-11T07:57:34",
+  "reference_number": "0551f7cu-8DWgni66i"
+}
