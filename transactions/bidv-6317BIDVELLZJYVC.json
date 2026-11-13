@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 16000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "HO KINH DOANH CUA HANG TIEN LOI LENA MART",
+  "transaction_at": "2026-11-13T20:22:34",
+  "reference_number": "6317BIDVELLZJYVC"
+}
