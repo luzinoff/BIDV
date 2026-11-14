@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 35000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "HKD COM NHA ZOZO",
+  "transaction_at": "2026-11-14T16:03:12",
+  "reference_number": "6318BIDVELL4AWCN"
+}

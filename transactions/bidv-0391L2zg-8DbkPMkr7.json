@@ -1,0 +1,8 @@
+{
+  "transaction_type": "within_bidv_transfer",
+  "amount_vnd": 70000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "PHAM THI PHIEU",
+  "transaction_at": "2026-11-14T15:46:00",
+  "reference_number": "0391L2zg-8DbkPMkr7"
+}
