@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 45000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "NHON BAP_LE THUY LINH",
+  "transaction_at": "2026-11-15T13:30:28",
+  "reference_number": "6319BIDVELLWUPWX"
+}
