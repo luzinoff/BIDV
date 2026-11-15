@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 65000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "HO KINH DOANH LE PHAN THUAN",
+  "transaction_at": "2026-11-15T20:06:46",
+  "reference_number": "6319BIDVELLEXJHU"
+}
