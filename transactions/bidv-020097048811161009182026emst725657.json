@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 315000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "HO KINH DOANH PHARMACY GO",
+  "transaction_at": "2026-11-16T10:09:18",
+  "reference_number": "020097048811161009182026emst725657"
+}
