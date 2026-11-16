@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 122800,
+  "recipient_type": "beneficiary",
+  "recipient_name": "WINCOMMERCE GENERAL COMMERCIAL SERVICES JOINT STOCK COMPANY",
+  "transaction_at": "2026-11-16T11:00:37",
+  "reference_number": "6320BIDVELLGNFJA"
+}
