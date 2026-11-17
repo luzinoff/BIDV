@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 22000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "KAGANOVSKII ALEKSANDR",
+  "transaction_at": "2026-11-17T19:50:13",
+  "reference_number": "020097048811171950132026yli4307643"
+}
