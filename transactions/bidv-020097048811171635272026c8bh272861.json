@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 10000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "CONG TY TNHH MOONMILK - AN VIEN_115002944903",
+  "transaction_at": "2026-11-17T16:35:27",
+  "reference_number": "020097048811171635272026c8bh272861"
+}
