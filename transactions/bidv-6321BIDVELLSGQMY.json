@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 80055,
+  "recipient_type": "beneficiary",
+  "recipient_name": "PETROLIMEX KHANH HOA-CH 01",
+  "transaction_at": "2026-11-17T15:37:01",
+  "reference_number": "6321BIDVELLSGQMY"
+}
