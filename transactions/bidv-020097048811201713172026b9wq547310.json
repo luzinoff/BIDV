@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 33000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "MRDIY",
+  "transaction_at": "2026-11-20T17:13:18",
+  "reference_number": "020097048811201713172026b9wq547310"
+}
