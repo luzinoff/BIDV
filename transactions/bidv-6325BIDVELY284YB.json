@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 80000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "NGUYEN THI DEP_NGUYEN THI DEP",
+  "transaction_at": "2026-11-21T13:06:30",
+  "reference_number": "6325BIDVELY284YB"
+}
