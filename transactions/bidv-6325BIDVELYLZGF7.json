@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 79000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "MOMO_AN S KITCHEN_LE AN",
+  "transaction_at": "2026-11-21T19:57:17",
+  "reference_number": "6325BIDVELYLZGF7"
+}
