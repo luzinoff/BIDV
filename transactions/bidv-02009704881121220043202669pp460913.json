@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 37500,
+  "recipient_type": "beneficiary",
+  "recipient_name": "CONG TY TNHH MEIVI-CHI NHANH LEE DANECOFFEE&BAKERY",
+  "transaction_at": "2026-11-21T22:00:43",
+  "reference_number": "02009704881121220043202669pp460913"
+}
