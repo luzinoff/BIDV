@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 50000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "USIKOVA TATIANA",
+  "transaction_at": "2026-11-22T15:45:04",
+  "reference_number": "020097048811221545042026o0yt649622"
+}
