@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 50000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "STANISLAV BOKAREV",
+  "transaction_at": "2026-11-22T17:02:39",
+  "reference_number": "020097048811221702392026jehc011623"
+}
