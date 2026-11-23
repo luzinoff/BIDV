@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 12000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "LE THANH LY",
+  "transaction_at": "2026-11-23T14:36:43",
+  "reference_number": "020097048811231436432026vwsn188858"
+}
