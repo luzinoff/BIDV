@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 200000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "USMANOVA ALBINA",
+  "transaction_at": "2026-11-26T17:36:10",
+  "reference_number": "020097048811261736092026z55m603383"
+}
