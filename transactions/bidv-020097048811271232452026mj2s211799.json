@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 52000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "HO KINH DOANH 1990 HOMESTYLE BISTRO NT",
+  "transaction_at": "2026-11-27T12:32:45",
+  "reference_number": "020097048811271232452026mj2s211799"
+}
