@@ -1,0 +1,8 @@
+{
+  "transaction_type": "interbank_transfer",
+  "amount_vnd": 50000,
+  "recipient_type": "beneficiary",
+  "recipient_name": "CONG TY CO PHAN ZION-Facebook Ads",
+  "transaction_at": "2026-11-28T18:37:02",
+  "reference_number": "6332BIDVELYKMNUI"
+}
